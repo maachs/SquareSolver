@@ -1,6 +1,9 @@
 #include <TXLib.h>
 #include <math.h>
 
+// препроцессор
+#define XAX //printf ("DEBUG LINE %d\n", __LINE__);
+
 const double EPS = 0.001;
 
 enum Compare
@@ -58,25 +61,52 @@ void AllTest ();
 
 bool NAN_OR_INF (double check);
 
+void Swap (double *value1, double *value2);
+
 int main()
 {
-    //Coeffs coeffs = {.a = 1,.b = 2,.c = 1};
-    //Roots solution = {};
-    //ExpectedSol_1 expected = {1,1,NAN,1};
+    int choose = NAN;
+    printf("Для решения уравнения 1\nДля проверки 2\n");
 
-    //InputCoeffs(&coeffs);
-    //SolveSquare (*expected_2);
-    AllTest ();
-    //Test (coeffs, &solution, &expected);
-    //OutputSolution(solution);
+        XAX
+    scanf("%d", &choose);
+        XAX
+    while (true)
+    {
+        if (choose == 1)
+        {
+            Coeffs coeffs;
+            Roots solution;
+            XAX
+            InputCoeffs(&coeffs);
+            XAX
+            SolveSquare(coeffs, &solution);
+            OutputSolution(solution);
+            return 0;
+        }
+        else if (choose == 2)
+        {
+            AllTest ();
+            XAX
+            return 0;
+        }
+        else
+        {
+            printf("Неверный ввод\n");
+            if (!isdigit(choose))
+            {
+                getchar();
+            }
+            scanf("%d", &choose);
+        }
 
-    return 0;
+    }
 }
 
 void SolveSquare(Coeffs coeffs, Roots* solution)
 {
     assert (solution );
-
+                       XAX
     if (CompareOnZero(coeffs.a) == 0)
     {
           LineSolution (coeffs, solution);
@@ -251,7 +281,7 @@ void Test (int TestNumber, Roots* solution, ExpectedSol* expected )
 
 void AllTest ()
 {
-    const int AmountOfTest = 11;
+    const int AmountOfTest = 12;
     Roots solution = {};
     ExpectedSol expected [AmountOfTest] = {{{0, 0, 0}, NAN, NAN, INF_ROOTS},
                                            {{0, 0, 1}, NAN, NAN, 0},
@@ -263,10 +293,15 @@ void AllTest ()
                                            {{1, 1, -12}, -4, 3, 2},
                                            {{1, 1, 0.25}, -0.5, NAN, 1},
                                            {{4, -3, 2}, NAN, NAN, 0},
-                                           {{2, 6, -3}, -3.43649, 0.436492,2}};
+                                           {{2, 6, -3}, -3.43649, 0.436492,2},
+                                           {{2, 6, -3}, 0.436492, -3.43649,2}};
 
     for (int TestNumber = 0; TestNumber < AmountOfTest; TestNumber++)
     {
+        if (expected[TestNumber].x1_expected > expected[TestNumber].x2_expected)
+        {
+            Swap(&expected[TestNumber].x1_expected, &expected[TestNumber].x2_expected);
+        }
         printf("Starts test %d\n", TestNumber + 1);
         Test (TestNumber, &solution, expected + TestNumber);
 
@@ -283,4 +318,16 @@ bool NAN_OR_INF (double check)
     {
         return 1;
     }
+}
+
+void Swap (double *value1, double *value2)
+{
+    assert(value1);
+    assert(value2);
+    double temp = *value2;
+    *value2 = *value1;
+    *value1 = temp;
+
+
+
 }
