@@ -1,25 +1,7 @@
 #include <TXLib.h>
 #include <math.h>
+#include <Const_Enum.h>
 
-// препроцессор
-#define XAX //printf ("DEBUG LINE %d\n", __LINE__);
-
-const double EPS = 0.001;
-
-enum Compare
-{
-    EQUAL_TO_ZERO = 0,
-    GREATER_THAN_ZERO = 1,
-    LOWER_THAN_ZERO = -1,
-};
-
-enum KolvoResh
-{
-    INF_ROOTS = -1,
-    ONE_ROOTS = 1,
-    NO_ROOTS = 0,
-    TWO_ROOTS = 2,
-};
 
 struct Coeffs
 {
@@ -29,8 +11,8 @@ struct Coeffs
 };
 struct Roots
 {
-  double x1 = NAN;
-  double x2 = NAN;
+  double x1  = NAN;
+  double x2  = NAN;
   int nRoots = NAN;
 };
 struct ExpectedSol
@@ -67,36 +49,34 @@ int main()
 {
     int choose = NAN;
     printf("Для решения уравнения 1\nДля проверки 2\n");
-
-        XAX
     scanf("%d", &choose);
-        XAX
     while (true)
     {
         if (choose == 1)
         {
             Coeffs coeffs;
             Roots solution;
-            XAX
+
             InputCoeffs(&coeffs);
-            XAX
             SolveSquare(coeffs, &solution);
             OutputSolution(solution);
+
             return 0;
         }
         else if (choose == 2)
         {
             AllTest ();
-            XAX
             return 0;
         }
         else
         {
+            txSetConsoleAttr(FOREGROUND_RED | BACKGROUND_BLACK);
             printf("Неверный ввод\n");
             if (!isdigit(choose))
             {
                 getchar();
             }
+            txSetConsoleAttr(FOREGROUND_WHITE | BACKGROUND_BLACK);
             scanf("%d", &choose);
         }
 
@@ -106,7 +86,6 @@ int main()
 void SolveSquare(Coeffs coeffs, Roots* solution)
 {
     assert (solution );
-                       XAX
     if (CompareOnZero(coeffs.a) == 0)
     {
           LineSolution (coeffs, solution);
@@ -123,18 +102,23 @@ void OutputSolution (Roots solution)
     switch (solution.nRoots)
     {
         case NO_ROOTS:
+            txSetConsoleAttr(FOREGROUND_RED | BACKGROUND_BLACK);
             printf("Нет решений\n");
             break;
         case ONE_ROOTS:
+            txSetConsoleAttr(FOREGROUND_GREEN | BACKGROUND_BLACK);
             printf("x = %lg", solution.x1);
             break;
         case TWO_ROOTS:
+            txSetConsoleAttr(FOREGROUND_GREEN | BACKGROUND_BLACK);
             printf("x1 = %lg\nx2 = %lg", solution.x1, solution.x2);
             break;
         case INF_ROOTS:
+            txSetConsoleAttr(FOREGROUND_DARKYELLOW | BACKGROUND_BLACK);
             printf("Любое число");
             break;
         default:
+            txSetConsoleAttr(FOREGROUND_RED | BACKGROUND_BLACK);
             printf("error %d", solution.nRoots);
             break;
 
@@ -146,11 +130,13 @@ void InputCoeffs(Coeffs* coeffs)
     assert (coeffs);
 
     while (true){
+        txSetConsoleAttr(FOREGROUND_WHITE | BACKGROUND_BLACK);
         printf("Введите коффиценты:\n");
 
         if (scanf("%lg %lg %lg", &coeffs->a, &coeffs->b, &coeffs->c) != 3)
         {
             while (getchar() != '\n') {};
+            txSetConsoleAttr(FOREGROUND_WHITE | BACKGROUND_BLACK);
             printf("Неверные коэффиценты\n");
             continue;
         }
@@ -268,6 +254,7 @@ void Test (int TestNumber, Roots* solution, ExpectedSol* expected )
     }
       if ((*solution).nRoots != (*expected).nRoots_expected || CompareOnZero(delta_x1) != EQUAL_TO_ZERO || CompareOnZero(delta_x2) != EQUAL_TO_ZERO)
     {
+        txSetConsoleAttr(FOREGROUND_RED | BACKGROUND_BLACK);
         printf("\nError: Test %d\n  a = %lg b = %lg c = %lg\n  x1 = %lg x2 = %lg nRoots = %d\n"
                "Expected:\n  x1 = %lg x2 = %lg nRoots = %d\n",
                TestNumber + 1, expected->coeffs.a, expected->coeffs.b, expected->coeffs.c, (*solution).x1, (*solution).x2, (*solution).nRoots,
@@ -275,6 +262,7 @@ void Test (int TestNumber, Roots* solution, ExpectedSol* expected )
     }
     else
     {
+        txSetConsoleAttr(FOREGROUND_GREEN | BACKGROUND_BLACK);
         printf ("Test %d Completed Succesfull\n",TestNumber + 1);
     }
 }
